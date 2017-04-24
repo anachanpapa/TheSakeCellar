@@ -1,0 +1,91 @@
+{{extend 'layout.html'}}
+
+<div style="margin-bottom:60px;" class="container group">
+
+	<h2 class="page_title">
+		Add item to sales order:  {{=A(order.order_number, _href=URL('order_edit', args=order.id))}}
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+		
+	<div>
+		<ul>
+			<li><strong>Order number: </strong> {{=order.order_number}}</li>
+			<li><strong>Ordered by: </strong> {{=order.ordered_by}}</li>
+			<li><strong>Order status: </strong> {{=order.order_status}}</li>
+			<li><strong>Order time: </strong> {{=order.order_time}}</li>		
+			<li><strong>Dispatch time: </strong> {{=order.dispatch_time}}</li>
+			<li><strong>Total amount: </strong> {{=order.total_amount}}</li>
+		</ul>	
+	   
+		<select id="select_test" style="margin-top:10px;">
+			{{for product in products:}}
+			<option value='{{=product.id}}'>{{=product.name}}</option>
+			{{pass}}
+		</select>
+
+		<div style="margin-top:5px; margin-bottom:30px;"><button id="add_item">Add 1 case (12 bottoles)</button></div>
+		
+		{{if items:}}
+		<table class="data_table">	
+			<tr class="data_table_header">
+				<td>Product name</td>
+				<td>Class</td>			
+				<td>Case quantity</td>
+				<td>price</td>
+			</tr>	
+			{{for item in items:}}
+			<tr>
+				<td>{{=A(item.product.name, _href=URL('product_detail', args=item.product.id))}}</a></td>
+				<td>{{=item.product.meisho}}</td>
+				<td><div class="case_quantity">{{=item.case_quantity}}</div>
+					<button class="add_item2" value="{{=item.product.id}}">Add 1 case</button>	
+					<button class="drop_item" value="{{=item.product.id}}">Drop 1 case</button>
+				</td>
+				<td></td>
+			</tr>
+			{{pass}}		
+		</table>	
+		{{pass}}
+		
+	</div>
+
+</div>
+
+<script>
+$("#add_item").click( function(){
+    var select_item = $("#select_test").val();
+    //alert({{=order.id}} + ": " + select_item );
+	var order_id = {{=order.id}};
+    $.post("{{=URL('add_item')}}",
+        {order_id:order_id, select_item: select_item},
+        function(data){
+			location.href = "/sales_item_create/" + order_id;
+        }
+    );	
+});
+
+$(".add_item2").click( function(){
+    var select_item = $(this).val();
+	//alert(select_item);
+	var order_id = {{=order.id}};
+    $.post("{{=URL('add_item')}}",
+        {order_id:order_id, select_item: select_item},
+        function(data){
+			location.href = "/sales_item_create/" + order_id;
+        }
+    );	
+});	
+
+$(".drop_item").click( function(){
+    var select_item = $(this).val();
+	//alert(select_item);
+	var order_id = {{=order.id}};
+    $.post("{{=URL('drop_item')}}",
+        {order_id:order_id, select_item: select_item},
+        function(data){
+			location.href = "/sales_item_create/" + order_id;
+        }
+    );	
+});	
+
+</script>

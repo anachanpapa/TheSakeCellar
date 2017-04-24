@@ -1,0 +1,749 @@
+(dp1
+S'output'
+p2
+S"<class 'sqlite3.IntegrityError'> company_category.category may not be NULL"
+p3
+sS'layer'
+p4
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\controllers/default.py'
+p5
+sS'code'
+p6
+S'# -*- coding: utf-8 -*-\n# this file is released under public domain and you can use without limitations\n\n#########################################################################\n## This is a sample controller\n## - index is the default action of any application\n## - user is required for authentication and authorization\n## - download is for downloading files uploaded in the db (does streaming)\n#########################################################################\n\n\ndef index():\n\treturn locals()\n\n\t\n@auth.requires_membership(\'admin\')\ndef admin():\n\tcompanies = db(db.company).select(orderby=db.company.name)\n\treturn locals()\n\t\n\n\t\n@auth.requires_login()\ndef products():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tproducts = db(db.product).select(orderby=db.product.name)\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef product_create():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tform = crud.create(db.product, next=\'products\')\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef product_edit():\n\tproduct = db.product(request.args(0)) or redirect(URL(\'products\'))\n\tform = crud.update(db.product, product, next=\'products\')\n\treturn locals()\n\ndef product_detail():\n\tproduct = db.product(request.args(0)) or redirect(URL(\'products\'))\n\treturn locals()\n\t\n@auth.requires_login()\ndef products_():\n\treturn locals()\n\n\n@auth.requires_membership(\'admin\')\t\ndef customers():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tcustomers = db(db.auth_user).select(orderby=db.auth_user.first_name)\n\treturn locals()\n\t\n@auth.requires_membership(\'admin\')\ndef customer_edit():\n\tcustomer = db.auth_user(request.args(0)) or redirect(URL(\'customers\'))\n\tform = SQLFORM(db.auth_user, customer, showid=False, next=\'products\', ignore_rw=True,\n\tfields=[\'first_name\', \'last_name\', \'email\', \'company_name\', \'company_category\', \'company_homepage\', \'office_address\', \'postcode\', \'phone_number\', \'title\'])\n\t#form = SQLFORM(db.auth_user, customer, deletable=True)\n\tif form.process().accepted:\n\t\tsession.flash = \'form accepted\'\n\t\tredirect(URL(\'customers\'))\n\telif form.errors:\n\t\tresponse.flash = \'form has errors\'\n\treturn dict(form=form)\n\n@auth.requires_membership(\'admin\')\t\ndef customer_detail():\n\tcustomer = db.auth_user(request.args(0)) or redirect(URL(\'customers\'))\n\tform = SQLFORM(db.auth_user, customer, showid=False, next=\'products\', readonly=True,\n\tfields=[\'first_name\', \'last_name\', \'email\', \'company_name\', \'company_homepage\', \'office_address\', \'postcode\', \'phone_number\', \'title\'])\n\t#form = SQLFORM(db.auth_user, customer, deletable=True)\n\tif form.process().accepted:\n\t\tsession.flash = \'form accepted\'\n\t\tredirect(URL(\'customers\'))\n\telif form.errors:\n\t\tresponse.flash = \'form has errors\'\n\treturn locals()\n\n\t\n@auth.requires_membership(\'admin\')\ndef categories():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tcategories = db(db.company_category).select(orderby=db.company_category.name)\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef category_create():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tform = crud.create(db.company_category, next=\'categories\')\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef category_edit():\n\tcategory = db.company_category(request.args(0)) or redirect(URL(\'categories\'))\n\tform = crud.update(db.company_category, category, next=\'categories\')\n\treturn locals()\n\t\n\n@auth.requires_membership(\'admin\')\ndef orders():\n\tif auth.user is None: redirect(URL(\'index\'))\n\torders = db(db.sales_order).select(orderby=db.sales_order.order_time)\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef order_create():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tform = crud.create(db.sales_order, next=\'orders\')\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef order_edit():\n\torder = db.sales_order(request.args(0)) or redirect(URL(\'orders\'))\n\tform = crud.update(db.sales_order, order, next=\'orders\')\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef order_detail():\n\torder = db.sales_order(request.args(0)) or redirect(URL(\'orders\'))\n\treturn locals()\n\n\t\n@auth.requires_membership(\'admin\')\ndef sales_item_create():\n\torder = db.sales_order(request.args(0)) or redirect(URL(\'orders\'))\n\tproducts = db(db.product).select(orderby=db.product.name)\n\titems = db(db.sales_item.sales_order == order).select()\n\treturn locals()\t\n\ndef add_item():\n\torder_id = int(request.vars.order_id)\n\tselect_item = int(request.vars.select_item)\n\t\n\titem = db((db.sales_item.sales_order == order_id) & (db.sales_item.product == select_item)).select().first()\n\n\tif item is None:\n\t\tdb.sales_item.validate_and_insert(\n\t\t\tsales_order=order_id,\n\t\t\tproduct=select_item,\n\t\t\tcase_quantity=1\n\t\t)\t\n\t\tsession.flash = \'An item has been added\'\n\t\treturn\n\telse:\n\t\tdb((db.sales_item.sales_order == order_id) & (db.sales_item.product == select_item)).update(\n\t\t\tcase_quantity=db.sales_item.case_quantity + 1\n\t\t)\t\n\t\tsession.flash = \'An item has been added\'\n\t\treturn\n\ndef drop_item():\n\torder_id = int(request.vars.order_id)\n\tselect_item = int(request.vars.select_item)\n\t\n\titem = db((db.sales_item.sales_order == order_id) & (db.sales_item.product == select_item)).select().first()\n\n\tif item.case_quantity == 1:\n\t\tdb((db.sales_item.sales_order == order_id) & (db.sales_item.product == select_item)).delete()\t\n\t\tsession.flash = \'An item has been droped\'\n\t\treturn\n\telse:\n\t\tdb((db.sales_item.sales_order == order_id) & (db.sales_item.product == select_item)).update(\n\t\t\tcase_quantity=db.sales_item.case_quantity - 1\n\t\t)\t\n\t\tsession.flash = \'An item has been droped\'\n\t\treturn\n\t\n\'\'\'\n@auth.requires_membership(\'admin\')\ndef customer_logs():\n\tcontact = db.contact(request.args(0)) or redirect(URL(\'companies\'))\n\tdb.log.contact.default = contact.id\n\tdb.log.contact.readable = False\n\tdb.log.contact.writable = False\n\tdb.log.posted_on.default = request.now\n\tdb.log.posted_on.readable = False\n\tdb.log.posted_on.writable = False\n\tform = crud.create(db.log)\n\tlogs = db(db.log.contact==contact.id).select(orderby=db.log.posted_on)\n\treturn locals()\n\'\'\'\n\t\n\t\n@auth.requires_membership(\'admin\')\t\ndef premises():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tpremises = db(db.premise).select(orderby=db.premise.premise_name)\n\treturn locals()\n\t\n@auth.requires_membership(\'admin\')\ndef premise_create():\n\tif auth.user is None: redirect(URL(\'index\'))\n\tform = crud.create(db.premise, next=\'premises\')\n\treturn locals()\n\n@auth.requires_membership(\'admin\')\ndef premise_edit():\n\tpremise = db.premise(request.args(0)) or redirect(URL(\'index\'))\n\tform = crud.update(db.premise, premise, next=\'premises\')\n\treturn locals()\n\n\t\n\ndef user():\n    """\n    exposes:\n    http://..../[app]/default/user/login\n    http://..../[app]/default/user/logout\n    http://..../[app]/default/user/register\n    http://..../[app]/default/user/profile\n    http://..../[app]/default/user/retrieve_password\n    http://..../[app]/default/user/change_password\n    http://..../[app]/default/user/bulk_register\n    use @auth.requires_login()\n        @auth.requires_membership(\'group name\')\n        @auth.requires_permission(\'read\',\'table name\',record_id)\n    to decorate functions that need access control\n    also notice there is http://..../[app]/appadmin/manage/auth to allow administrator to manage users\n    """\n    return dict(form=auth())\n\n\n@cache.action()\ndef download():\n    """\n    allows downloading of uploaded files\n    http://..../[app]/default/download/[filename]\n    """\n    return response.download(request, db)\n\n\ndef call():\n    """\n    exposes services. for example:\n    http://..../[app]/default/call/jsonrpc\n    decorate with @services.jsonrpc the functions to expose\n    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv\n    """\n    return service()\n\ndef index(): \n     return dict(form=auth.login())\n\t \n\t \n\t \nresponse._vars=response._caller(category_create)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+S'exception'
+p10
+(dp11
+S'__module__'
+p12
+S"'sqlite3'"
+p13
+sS'__getslice__'
+p14
+S"<method-wrapper '__getslice__' of IntegrityError object>"
+p15
+sS'__str__'
+p16
+S"<method-wrapper '__str__' of IntegrityError object>"
+p17
+sS'__reduce__'
+p18
+S'<built-in method __reduce__ of IntegrityError object>'
+p19
+sS'__dict__'
+p20
+S'{}'
+p21
+sS'__sizeof__'
+p22
+S'<built-in method __sizeof__ of IntegrityError object>'
+p23
+sS'__weakref__'
+p24
+S'None'
+p25
+sS'__init__'
+p26
+S"<method-wrapper '__init__' of IntegrityError object>"
+p27
+sS'__setattr__'
+p28
+S"<method-wrapper '__setattr__' of IntegrityError object>"
+p29
+sS'__reduce_ex__'
+p30
+S'<built-in method __reduce_ex__ of IntegrityError object>'
+p31
+sS'__new__'
+p32
+S'<built-in method __new__ of type object>'
+p33
+sS'__format__'
+p34
+S'<built-in method __format__ of IntegrityError object>'
+p35
+sS'__class__'
+p36
+S"<class 'sqlite3.IntegrityError'>"
+p37
+sS'__doc__'
+p38
+S'None'
+p39
+sS'__getitem__'
+p40
+S"<method-wrapper '__getitem__' of IntegrityError object>"
+p41
+sS'__setstate__'
+p42
+S'<built-in method __setstate__ of IntegrityError object>'
+p43
+sS'__getattribute__'
+p44
+S"<method-wrapper '__getattribute__' of IntegrityError object>"
+p45
+sS'args'
+p46
+S"('company_category.category may not be NULL',)"
+p47
+sS'__subclasshook__'
+p48
+S'<built-in method __subclasshook__ of type object>'
+p49
+sS'__unicode__'
+p50
+S'<built-in method __unicode__ of IntegrityError object>'
+p51
+sS'__delattr__'
+p52
+S"<method-wrapper '__delattr__' of IntegrityError object>"
+p53
+sS'__repr__'
+p54
+S"<method-wrapper '__repr__' of IntegrityError object>"
+p55
+sS'__hash__'
+p56
+S"<method-wrapper '__hash__' of IntegrityError object>"
+p57
+ssS'evalue'
+p58
+S'company_category.category may not be NULL'
+p59
+sS'request'
+p60
+cgluon.html
+XML_unpickle
+p61
+(S's)j\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">ajax</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">application</td><td style="vertical-align:top;">:</td><td><div>scaffolding</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cid</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">client</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">controller</td><td style="vertical-align:top;">:</td><td><div>default</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cookies</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">session_id_admin</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-27cca343-742e-4024-96f9-fc45a2a3bc29<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_scaffolding</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_welcome</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-0f66c73f-034c-4d89-b065-f6c9a7ff70a5<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">env</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">CONTENT_LENGTH</td><td style="vertical-align:top;">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">CONTENT_TYPE</td><td style="vertical-align:top;">:</td><td><div>multipart/form-data; boundary=----WebKitFormBoundaryTPdTPcqxSWHkmsrD</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT</td><td style="vertical-align:top;">:</td><td><div>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT_ENCODING</td><td style="vertical-align:top;">:</td><td><div>gzip, deflate</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT_LANGUAGE</td><td style="vertical-align:top;">:</td><td><div>ja,en-US;q=0.8,en;q=0.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CACHE_CONTROL</td><td style="vertical-align:top;">:</td><td><div>max-age=0</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CONNECTION</td><td style="vertical-align:top;">:</td><td><div>keep-alive</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CONTENT_LENGTH</td><td style="vertical-align:top;">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CONTENT_TYPE</td><td style="vertical-align:top;">:</td><td><div>multipart/form-data; boundary=----WebKitFormBoundaryTPdTPcqxSWHkmsrD</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_COOKIE</td><td style="vertical-align:top;">:</td><td><div>session_id_welcome=127.0.0.1-0f66c73f-034c-4d89-b065-f6c9a7ff70a5; session_id_admin=127.0.0.1-27cca343-742e-4024-96f9-fc45a2a3bc29; session_id_scaffolding=127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_HOST</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ORIGIN</td><td style="vertical-align:top;">:</td><td><div>http://127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_REFERER</td><td style="vertical-align:top;">:</td><td><div>http://127.0.0.1:8000/scaffolding/default/category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_UPGRADE_INSECURE_REQUESTS</td><td style="vertical-align:top;">:</td><td><div>1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_USER_AGENT</td><td style="vertical-align:top;">:</td><td><div>Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">PATH_INFO</td><td style="vertical-align:top;">:</td><td><div>/scaffolding/default/category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">QUERY_STRING</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REMOTE_ADDR</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REMOTE_PORT</td><td style="vertical-align:top;">:</td><td><div>64265</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REQUEST_METHOD</td><td style="vertical-align:top;">:</td><td><div>POST</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SCRIPT_NAME</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_NAME</td><td style="vertical-align:top;">:</td><td><div>Grace</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_PORT</td><td style="vertical-align:top;">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_PROTOCOL</td><td style="vertical-align:top;">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_SOFTWARE</td><td style="vertical-align:top;">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">app_folders</td><td style="vertical-align:top;">:</td><td><div>set([&#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\welcome\\\\&#x27;, &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\scaffolding\\\\&#x27;, &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\admin\\\\&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">applications_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_options</td><td style="vertical-align:top;">:</td><td><div>&lt;Values at 0x34b1dc8: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;fe80::5c04:b79d:529c:b311%5&#x27;, &#x27;192.168.2.1&#x27;, &#x27;2001:0:9d38:6abd:2048:2736:a96e:b446&#x27;, &#x27;192.168.229.1&#x27;, &#x27;192.168.1.72&#x27;, &#x27;fe80::28d2:dcdc:45a1:1f9c%2&#x27;, &#x27;fe80::2048:2736:a96e:b446%3&#x27;, &#x27;fe80::2093:bc47:9545:e11c%6&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;scheduler_groups&#x27;: None, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;Grace&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;print_errors&#x27;: False, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;minthreads&#x27;: None, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;profiler_dir&#x27;: None, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;interfaces&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;gae&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;import_models&#x27;: False, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">content_length</td><td style="vertical-align:top;">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">content_type</td><td style="vertical-align:top;">:</td><td><div>multipart/form-data; boundary=----WebKitFormBoundaryTPdTPcqxSWHkmsrD</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">db_sessions</td><td style="vertical-align:top;">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">debugging</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">gluon_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept</td><td style="vertical-align:top;">:</td><td><div>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept_encoding</td><td style="vertical-align:top;">:</td><td><div>gzip, deflate</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept_language</td><td style="vertical-align:top;">:</td><td><div>ja,en-US;q=0.8,en;q=0.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_cache_control</td><td style="vertical-align:top;">:</td><td><div>max-age=0</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_connection</td><td style="vertical-align:top;">:</td><td><div>keep-alive</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_content_length</td><td style="vertical-align:top;">:</td><td><div>590</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_content_type</td><td style="vertical-align:top;">:</td><td><div>multipart/form-data; boundary=----WebKitFormBoundaryTPdTPcqxSWHkmsrD</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_cookie</td><td style="vertical-align:top;">:</td><td><div>session_id_welcome=127.0.0.1-0f66c73f-034c-4d89-b065-f6c9a7ff70a5; session_id_admin=127.0.0.1-27cca343-742e-4024-96f9-fc45a2a3bc29; session_id_scaffolding=127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_host</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_origin</td><td style="vertical-align:top;">:</td><td><div>http://127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_referer</td><td style="vertical-align:top;">:</td><td><div>http://127.0.0.1:8000/scaffolding/default/category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_upgrade_insecure_requests</td><td style="vertical-align:top;">:</td><td><div>1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_user_agent</td><td style="vertical-align:top;">:</td><td><div>Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_jython</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_pypy</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_source</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">local_hosts</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>fe80::5c04:b79d:529c:b311%5</div></td></tr><tr><td><div>192.168.2.1</div></td></tr><tr><td><div>2001:0:9d38:6abd:2048:2736:a96e:b446</div></td></tr><tr><td><div>192.168.229.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>::1</div></td></tr><tr><td><div>192.168.1.72</div></td></tr><tr><td><div>fe80::28d2:dcdc:45a1:1f9c%2</div></td></tr><tr><td><div>fe80::2048:2736:a96e:b446%3</div></td></tr><tr><td><div>fe80::2093:bc47:9545:e11c%6</div></td></tr><tr><td><div>Grace</div></td></tr><tr><td><div>127.0.0.1</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path_info</td><td style="vertical-align:top;">:</td><td><div>/scaffolding/default/category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">query_string</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remote_addr</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remote_port</td><td style="vertical-align:top;">:</td><td><div>64265</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">request_method</td><td style="vertical-align:top;">:</td><td><div>POST</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">request_uri</td><td style="vertical-align:top;">:</td><td><div>/scaffolding/default/category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">script_name</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_name</td><td style="vertical-align:top;">:</td><td><div>Grace</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_port</td><td style="vertical-align:top;">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_protocol</td><td style="vertical-align:top;">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_software</td><td style="vertical-align:top;">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_path</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_version</td><td style="vertical-align:top;">:</td><td><div>2.13.4-stable+timestamp.2015.12.26.04.59.39</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.errors</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0x025DD0D0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.file_wrapper</td><td style="vertical-align:top;">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0x03424068&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.input</td><td style="vertical-align:top;">:</td><td><div>&lt;socket._fileobject object at 0x0921DE70&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.multiprocess</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.multithread</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.run_once</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.url_scheme</td><td style="vertical-align:top;">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.version</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_errors</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0x025DD0D0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_file_wrapper</td><td style="vertical-align:top;">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0x03424068&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_input</td><td style="vertical-align:top;">:</td><td><div>&lt;socket._fileobject object at 0x0921DE70&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_multiprocess</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_multithread</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_run_once</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_url_scheme</td><td style="vertical-align:top;">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_version</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">extension</td><td style="vertical-align:top;">:</td><td><div>html</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">folder</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">function</td><td style="vertical-align:top;">:</td><td><div>category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">global_settings</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">app_folders</td><td style="vertical-align:top;">:</td><td><div>set([&#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\welcome\\\\&#x27;, &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\scaffolding\\\\&#x27;, &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\admin\\\\&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">applications_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_options</td><td style="vertical-align:top;">:</td><td><div>&lt;Values at 0x34b1dc8: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;fe80::5c04:b79d:529c:b311%5&#x27;, &#x27;192.168.2.1&#x27;, &#x27;2001:0:9d38:6abd:2048:2736:a96e:b446&#x27;, &#x27;192.168.229.1&#x27;, &#x27;192.168.1.72&#x27;, &#x27;fe80::28d2:dcdc:45a1:1f9c%2&#x27;, &#x27;fe80::2048:2736:a96e:b446%3&#x27;, &#x27;fe80::2093:bc47:9545:e11c%6&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;scheduler_groups&#x27;: None, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;Grace&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;print_errors&#x27;: False, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;minthreads&#x27;: None, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;profiler_dir&#x27;: None, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;interfaces&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;gae&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;import_models&#x27;: False, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">db_sessions</td><td style="vertical-align:top;">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">debugging</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">gluon_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_jython</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_pypy</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_source</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">local_hosts</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>fe80::5c04:b79d:529c:b311%5</div></td></tr><tr><td><div>192.168.2.1</div></td></tr><tr><td><div>2001:0:9d38:6abd:2048:2736:a96e:b446</div></td></tr><tr><td><div>192.168.229.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>::1</div></td></tr><tr><td><div>192.168.1.72</div></td></tr><tr><td><div>fe80::28d2:dcdc:45a1:1f9c%2</div></td></tr><tr><td><div>fe80::2048:2736:a96e:b446%3</div></td></tr><tr><td><div>fe80::2093:bc47:9545:e11c%6</div></td></tr><tr><td><div>Grace</div></td></tr><tr><td><div>127.0.0.1</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_version</td><td style="vertical-align:top;">:</td><td><div>2.13.4-stable+timestamp.2015.12.26.04.59.39</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_https</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_local</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_restful</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_scheduler</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_shell</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">now</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 1, 26, 22, 20, 12, 69000)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">raw_args</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">raw_extension</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">url</td><td style="vertical-align:top;">:</td><td><div>/scaffolding/default/category_create</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">utcnow</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 1, 26, 22, 20, 12, 69000)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi</td><td style="vertical-align:top;">:</td><td><div>&lt;gluon.main.LazyWSGI object at 0x097C9890&gt;</div></td></tr></table></div>'
+tRp62
+sS'frames'
+p63
+(lp64
+(dp65
+S'file'
+p66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\restricted.py'
+p67
+sS'dump'
+p68
+(dp69
+S'environment'
+p70
+S"{'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'ASSIGNJS': <function ASSIGNJS>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, ...}"
+p71
+sS'ccode'
+p72
+S'<code object <module> at 09A87F50, file "C:\\User...ons\\scaffolding\\controllers/default.py", line 12>'
+p73
+ssS'lnum'
+p74
+I227
+sS'lines'
+p75
+(dp76
+I224
+S'            ccode = code'
+p77
+sI225
+S'        else:'
+p78
+sI226
+S'            ccode = compile2(code, layer)'
+p79
+sI227
+S'        exec ccode in environment'
+p80
+sI228
+S'    except HTTP:'
+p81
+sI229
+S'        raise'
+p82
+sI230
+S'    except RestrictedError:'
+p83
+sI231
+S'        # do not encapsulate (obfuscate) the original RestrictedError'
+p84
+sI222
+S'    try:'
+p85
+sI223
+S'        if isinstance(code, types.CodeType):'
+p86
+ssS'call'
+p87
+S"(code='# -*- coding: utf-8 -*-\\n# this file is released ...response._vars=response._caller(category_create)\\n', environment={'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'ASSIGNJS': <function ASSIGNJS>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, ...}, layer=r'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\controllers/default.py')"
+p88
+sS'func'
+p89
+S'restricted'
+p90
+sa(dp91
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\controllers\\default.py'
+p92
+sg68
+(dp93
+sg74
+I249
+sg75
+(dp94
+I239
+S'    decorate with @services.jsonrpc the functions to expose'
+p95
+sI240
+S'    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv'
+p96
+sI241
+S'    """'
+p97
+sI242
+S'    return service()'
+p98
+sI243
+S''
+sI244
+S'def index():'
+p99
+sI245
+S'     return dict(form=auth.login())'
+p100
+sI246
+S''
+sI247
+S''
+sI248
+S''
+ssg87
+S'()'
+p101
+sg89
+S'<module>'
+p102
+sa(dp103
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\globals.py'
+p104
+sg68
+(dp105
+S'self'
+p106
+S'undefined'
+p107
+sS'f'
+S'<function category_create>'
+p108
+ssg74
+I412
+sg75
+(dp109
+I416
+S"        self.generic_patterns = ['*']"
+p110
+sI407
+S"        self.flash = ''            # used by the default view layout"
+p111
+sI408
+S'        self.meta = Storage()      # used by web2py_ajax.html'
+p112
+sI409
+S'        self.menu = []             # used by the default view layout'
+p113
+sI410
+S'        self.files = []            # used by web2py_ajax.html'
+p114
+sI411
+S'        self._vars = None'
+p115
+sI412
+S'        self._caller = lambda f: f()'
+p116
+sI413
+S'        self._view_environment = None'
+p117
+sI414
+S'        self._custom_commit = None'
+p118
+sI415
+S'        self._custom_rollback = None'
+p119
+ssg87
+S'(f=<function category_create>)'
+p120
+sg89
+S'<lambda>'
+p121
+sa(dp122
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\tools.py'
+p123
+sg68
+(dp124
+S'action'
+p125
+S'<function category_create>'
+p126
+sS'a'
+S'()'
+p127
+sS'b'
+g21
+ssg74
+I4237
+sg75
+(dp128
+I4232
+S'                    flag = condition'
+p129
+sI4233
+S'                if not flag:'
+p130
+sI4234
+S'                    current.session.flash = self.messages.access_denied'
+p131
+sI4235
+S'                    return call_or_redirect('
+p132
+sI4236
+S'                        self.settings.on_failed_authorization)'
+p133
+sI4237
+S'                return action(*a, **b)'
+p134
+sI4238
+S'            f.__doc__ = action.__doc__'
+p135
+sI4239
+S'            f.__name__ = action.__name__'
+p136
+sI4240
+S'            f.__dict__.update(action.__dict__)'
+p137
+sI4241
+S'            return f'
+p138
+ssg87
+S'(*a=(), **b={})'
+p139
+sg89
+S'f'
+sa(dp140
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\controllers\\default.py'
+p141
+sg68
+(dp142
+S'global crud'
+p143
+S'<gluon.tools.Crud object>'
+p144
+sS'form'
+p145
+g107
+sS'db.company_category'
+p146
+S'<Table company_category (id,name,off_rate)>'
+p147
+sS'builtinnext'
+p148
+S'<built-in function next>'
+p149
+sS'global db'
+p150
+S'<DAL uri="sqlite://storage.sqlite">'
+p151
+sS'crud.create'
+p152
+S'<bound method Crud.create of <gluon.tools.Crud object>>'
+p153
+ssg74
+I92
+sg75
+(dp154
+I96
+S'def category_edit():'
+p155
+sI87
+S'\treturn locals()'
+p156
+sI88
+S''
+sI89
+S"@auth.requires_membership('admin')"
+p157
+sI90
+S'def category_create():'
+p158
+sI91
+S"\tif auth.user is None: redirect(URL('index'))"
+p159
+sI92
+S"\tform = crud.create(db.company_category, next='categories')"
+p160
+sI93
+S'\treturn locals()'
+p161
+sI94
+S''
+sI95
+S"@auth.requires_membership('admin')"
+p162
+ssg87
+S'()'
+p163
+sg89
+S'category_create'
+p164
+sa(dp165
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\tools.py'
+p166
+sg68
+(dp167
+S'attributes'
+p168
+g21
+ssg74
+I4966
+sg75
+(dp169
+I4961
+S'                           onaccept=onaccept,'
+p170
+sI4962
+S'                           log=log,'
+p171
+sI4963
+S'                           message=message,'
+p172
+sI4964
+S'                           deletable=False,'
+p173
+sI4965
+S'                           formname=formname,'
+p174
+sI4966
+S'                           **attributes'
+p175
+sI4967
+S'                           )'
+p176
+sI4968
+S''
+sI4969
+S'    def read(self, table, record):'
+p177
+sI4970
+S'        if not (isinstance(table, Table) or table in self.db.tables) \\'
+p178
+ssg87
+S"(self=<gluon.tools.Crud object>, table=<Table company_category (id,name,off_rate)>, next='categories', onvalidation=<Storage {}>, onaccept=<Storage {}>, log='Record %(id)s created', message=<lazyT 'Record Created'>, formname=<function <lambda>>, **attributes={})"
+p179
+sg89
+S'create'
+p180
+sa(dp181
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\tools.py'
+p182
+sg68
+(dp183
+S'detect_record_change'
+p184
+g107
+sS'self'
+p185
+S'<gluon.tools.Crud object>'
+p186
+sS'self.settings'
+p187
+S"<Storage {'showid': False, 'delete_onaccept': <S...ble': True, 'create_onvalidation': <Storage {}>}>"
+p188
+sS'self.settings.detect_record_change'
+p189
+S'True'
+p190
+ssg74
+I4913
+sg75
+(dp191
+I4908
+S'        if isinstance(onvalidation, StorageList):'
+p192
+sI4909
+S'            onvalidation = onvalidation.get(table._tablename, [])'
+p193
+sI4910
+S'        if form.accepts(request, _session, formname=_formname,'
+p194
+sI4911
+S'                        onvalidation=onvalidation, keepvalues=keepvalues,'
+p195
+sI4912
+S'                        hideerror=self.settings.hideerror,'
+p196
+sI4913
+S'                        detect_record_change=self.settings.detect_record_change):'
+p197
+sI4914
+S'            self.accepted = True'
+p198
+sI4915
+S'            response.flash = message'
+p199
+sI4916
+S'            if log:'
+p200
+sI4917
+S'                self.log_event(log, form.vars)'
+p201
+ssg87
+S"(self=<gluon.tools.Crud object>, table=<Table company_category (id,name,off_rate)>, record=None, next='categories', onvalidation=[], onaccept=<Storage {}>, ondelete=<Storage {}>, log='Record %(id)s created', message=<lazyT 'Record Created'>, deletable=False, formname=<function <lambda>>, **attributes={'hidden': {'_next': 'categories'}})"
+p202
+sg89
+S'update'
+p203
+sa(dp204
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\sqlhtml.py'
+p205
+sg68
+(dp206
+S'self.vars.id'
+p207
+S'None'
+p208
+sS'fields'
+p209
+S"{'name': 'over \\xc2\\xa380', 'off_rate': 0.0}"
+p210
+sS'self'
+p211
+S'<gluon.sqlhtml.SQLFORM object>'
+p212
+sS'self.vars'
+p213
+S"<Storage {'off_rate': 0.0, 'name': 'over \\xc2\\xa380'}>"
+p214
+sS'self.table.insert'
+p215
+S'<bound method Table.insert of <Table company_category (id,name,off_rate)>>'
+p216
+sS'self.table'
+p217
+S'<Table company_category (id,name,off_rate)>'
+p218
+ssg74
+I1722
+sg75
+(dp219
+I1717
+S'                    self.vars.id = self.record[self.id_field_name]'
+p220
+sI1718
+S'                    if fields:'
+p221
+sI1719
+S'                        self.table._db(self.table._id == self.record['
+p222
+sI1720
+S'                                       self.id_field_name]).update(**fields)'
+p223
+sI1721
+S'                else:'
+p224
+sI1722
+S'                    self.vars.id = self.table.insert(**fields)'
+p225
+sI1723
+S'        self.accepted = ret'
+p226
+sI1724
+S'        return ret'
+p227
+sI1725
+S''
+sI1726
+S'    AUTOTYPES = {'
+p228
+ssg87
+S"(self=<gluon.sqlhtml.SQLFORM object>, request_vars=<Storage {'_formkey': 'ec5ea5da-e68b-444d-9e56-a...mpany_category/None', 'name': 'over \\xc2\\xa380'}>, session=<Storage {'_formkey[company_category/None]': ['e...gin]': ['3970d0fb-6d9f-41ce-beac-f26a17596ac3']}>, formname='company_category/None', keepvalues=False, onvalidation=[], dbio=True, hideerror=False, detect_record_change=True, **kwargs={})"
+p229
+sg89
+S'accepts'
+p230
+sa(dp231
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\objects.py'
+p232
+sg68
+(dp233
+S'self._listify'
+p234
+S'<bound method Table._listify of <Table company_category (id,name,off_rate)>>'
+p235
+sS'fields'
+p236
+S"{'name': 'over \\xc2\\xa380', 'off_rate': 0.0}"
+p237
+sS'self'
+p238
+S'<Table company_category (id,name,off_rate)>'
+p239
+sS'ret'
+p240
+g107
+sS'self._db._adapter'
+p241
+S'<pydal.adapters.sqlite.SQLiteAdapter object>'
+p242
+sS'self._db._adapter.insert'
+p243
+S'<bound method SQLiteAdapter.insert of <pydal.adapters.sqlite.SQLiteAdapter object>>'
+p244
+sS'self._db'
+p245
+S'<DAL uri="sqlite://storage.sqlite">'
+p246
+ssg74
+I731
+sg75
+(dp247
+I726
+S'    def insert(self, **fields):'
+p248
+sI727
+S'        fields = self._defaults(fields)'
+p249
+sI728
+S'        self._attempt_upload(fields)'
+p250
+sI729
+S'        if any(f(fields) for f in self._before_insert):'
+p251
+sI730
+S'            return 0'
+p252
+sI731
+S'        ret = self._db._adapter.insert(self, self._listify(fields))'
+p253
+sI732
+S'        if ret and self._after_insert:'
+p254
+sI733
+S'            fields = Row(fields)'
+p255
+sI734
+S'            [f(fields, ret) for f in self._after_insert]'
+p256
+sI735
+S'        return ret'
+p257
+ssg87
+S"(self=<Table company_category (id,name,off_rate)>, **fields={'name': 'over \\xc2\\xa380', 'off_rate': 0.0})"
+p258
+sg89
+S'insert'
+p259
+sa(dp260
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py'
+p261
+sg68
+(dp262
+S'e'
+S"IntegrityError('company_category.category may not be NULL',)"
+p263
+ssg74
+I746
+sg75
+(dp264
+I741
+S'            self.execute(query)'
+p265
+sI742
+S'        except Exception:'
+p266
+sI743
+S'            e = sys.exc_info()[1]'
+p267
+sI744
+S"            if hasattr(table,'_on_insert_error'):"
+p268
+sI745
+S'                return table._on_insert_error(table,fields,e)'
+p269
+sI746
+S'            raise e'
+p270
+sI747
+S"        if hasattr(table, '_primarykey'):"
+p271
+sI748
+S'            mydict = dict([(k[0].name, k[1]) for k in fields if k[0].name in table._primarykey])'
+p272
+sI749
+S'            if mydict != {}:'
+p273
+sI750
+S'                return mydict'
+p274
+ssg87
+S"(self=<pydal.adapters.sqlite.SQLiteAdapter object>, table=<Table company_category (id,name,off_rate)>, fields=[(<pydal.objects.Field object>, 0.0), (<pydal.objects.Field object>, 'over \\xc2\\xa380')])"
+p275
+sg89
+g259
+sasS'pyver'
+p276
+S'Python 2.7.11: C:\\Python27\\python.exe (prefix: C:\\Python27)'
+p277
+sS'session'
+p278
+g61
+(S's\xb4\x0c\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">auth</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">expiration</td><td style="vertical-align:top;">:</td><td><div>600</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">hmac_key</td><td style="vertical-align:top;">:</td><td><div>b2b47ff2-6eaa-4473-b01f-d3df703455f4</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">last_visit</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 1, 26, 22, 19, 54, 211000)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remember_me</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">user</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">company_homepage</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">company_name</td><td style="vertical-align:top;">:</td><td><div>2OR3 LTD</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">email</td><td style="vertical-align:top;">:</td><td><div>anachanpapa@gmail.com</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">first_name</td><td style="vertical-align:top;">:</td><td><div>Hiroshi</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">id</td><td style="vertical-align:top;">:</td><td><div>1L</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">last_name</td><td style="vertical-align:top;">:</td><td><div>Sasaki</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">office_address</td><td style="vertical-align:top;">:</td><td><div>2 Andover Close</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">phone_number</td><td style="vertical-align:top;">:</td><td><div>02085757185</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">postcode</td><td style="vertical-align:top;">:</td><td><div>UB6 9QW</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">registration_id</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">registration_key</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">reset_password_key</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">title</td><td style="vertical-align:top;">:</td><td><div>admin</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">user_groups</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">1</td><td style="vertical-align:top;">:</td><td><div>user_1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">4</td><td style="vertical-align:top;">:</td><td><div>admin</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">flash</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr></table></div>'
+tRp279
+sS'etype'
+p280
+S"<class 'sqlite3.IntegrityError'>"
+p281
+sS'date'
+p282
+S'Tue Jan 26 22:20:12 2016'
+p283
+sS'response'
+p284
+g61
+(S'sX\x1a\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">body</td><td style="vertical-align:top;">:</td><td><div>&lt;cStringIO.StringO object at 0x09D69040&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cookies</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">session_id_scaffolding</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">delimiters</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>{{</div></td></tr><tr><td><div>}}</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">files</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">flash</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">form_label_separator</td><td style="vertical-align:top;">:</td><td><div>: </div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">formstyle</td><td style="vertical-align:top;">:</td><td><div>table3cols</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">generic_patterns</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>*</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">headers</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">X-Powered-By</td><td style="vertical-align:top;">:</td><td><div>web2py</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">menu</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div><table><tr><td><div>Companies</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/scaffolding/default/companies</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Companies</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/scaffolding/default/companies</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Companies</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/scaffolding/default/companies</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">meta</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">models_to_run</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>^\\w+\\.py$</div></td></tr><tr><td><div>^default/\\w+\\.py$</div></td></tr><tr><td><div>^default/category_create/\\w+\\.py$</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">postprocessing</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_client</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_compression_level</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_expires</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_key</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_data_name</td><td style="vertical-align:top;">:</td><td><div>session_data_scaffolding</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_file</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\scaffolding\\\\sessions\\\\08e\\\\199\\\\127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e&#x27;, mode &#x27;rb+&#x27; at 0x09B4EF40&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_filename</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\sessions\\127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_hash</td><td style="vertical-align:top;">:</td><td><div>361306840c5a0667d17b3dc3b0b10613</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-d8138290-9878-463a-b8ed-d32f5f5d6d9e</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_name</td><td style="vertical-align:top;">:</td><td><div>session_id_scaffolding</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_locked</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_masterapp</td><td style="vertical-align:top;">:</td><td><div>scaffolding</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_new</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_storage_type</td><td style="vertical-align:top;">:</td><td><div>file</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">status</td><td style="vertical-align:top;">:</td><td><div>200</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">view</td><td style="vertical-align:top;">:</td><td><div>default/category_create.html</div></td></tr></table></div>'
+tRp285
+sS'locals'
+p286
+(dp287
+S'fields'
+p288
+S"[(<pydal.objects.Field object>, 0.0), (<pydal.objects.Field object>, 'over \\xc2\\xa380')]"
+p289
+sS'self'
+p290
+S'<pydal.adapters.sqlite.SQLiteAdapter object>'
+p291
+sS'e'
+S"IntegrityError('company_category.category may not be NULL',)"
+p292
+sS'table'
+p293
+S'<Table company_category (id,name,off_rate)>'
+p294
+sS'query'
+p295
+S'"INSERT INTO company_category(off_rate,name) VALUES (0.0,\'over \\xc2\\xa380\');"'
+p296
+sssS'traceback'
+p297
+S'Traceback (most recent call last):\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\restricted.py", line 227, in restricted\n    exec ccode in environment\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\controllers/default.py", line 249, in <module>\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\globals.py", line 412, in <lambda>\n    self._caller = lambda f: f()\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\tools.py", line 4237, in f\n    return action(*a, **b)\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\scaffolding\\controllers/default.py", line 92, in category_create\n    form = crud.create(db.company_category, next=\'categories\')\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\tools.py", line 4966, in create\n    **attributes\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\tools.py", line 4913, in update\n    detect_record_change=self.settings.detect_record_change):\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\sqlhtml.py", line 1722, in accepts\n    self.vars.id = self.table.insert(**fields)\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\objects.py", line 731, in insert\n    ret = self._db._adapter.insert(self, self._listify(fields))\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py", line 746, in insert\n    raise e\nIntegrityError: company_category.category may not be NULL\n'
+p298
+s.

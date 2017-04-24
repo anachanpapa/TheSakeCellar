@@ -1,0 +1,22 @@
+{{extend 'layout.html'}}
+
+<div class="non-mobile">
+	<div class="sake_back"></div> 
+	<div class="sake_inner">
+		<div class="catch_copy2">Discover beautiful rice wine.</div>
+		<div class="login_form">{{=form}}</div>
+		<div class="forgot"><a href="/user/request_reset_password">Forgot password?</a></div>	
+		<!-- div class="register_link">
+			<span>New to THE SAKE CELLAR?</span>
+			<button class="btn btn-default w2p-form-button" onclick="window.location='/user/register';return false">Sign Up</button>
+		</div -->	
+	</div>
+</div>
+
+<div class="mobile">
+	<div class="sake_inner">
+		<div class="catch_copy2">Discover beautiful rice wine.</div>
+		<div class="login_form">{{=form}}</div>
+		<div class="forgot"><a href="/user/request_reset_password">Forgot password?</a></div>	
+	</div>
+</div>

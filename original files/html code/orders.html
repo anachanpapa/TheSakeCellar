@@ -1,0 +1,52 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title2" style="margin-bottom:30px;">
+		Orders
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+	<div>
+		<table class="data_table">	
+			<tr class="data_table_header">
+				<td>Order number</td>
+				<td>Ordered by</td>
+				<td>Order status</td>
+				<td>Order time</td>
+				<td>Dispatch time</td>
+				<td>Delivery address</td>
+				<td>Payment method</td>				
+				<td>Postage</td>
+				<td>Subtotal</td>
+				<td>Total</td>
+			</tr>			
+			{{for order in orders:}}		
+			<tr>
+				<td>
+					{{=A(order.order_number, _href=URL('order_detail', args=order.id))}}&emsp;&emsp;
+					<span class="edit_link">{{=A('edit', _href=URL('order_edit', args=order.id))}}</span>
+				</td>
+				<td>{{=order.ordered_by.first_name}} {{=order.ordered_by.last_name}}</td>
+				<td>{{=order.order_status}}</td>
+				<td>{{if order.order_time:}} {{=order.order_time_s}} {{pass}}</td>
+				<td>{{if order.dispatch_time:}} {{=order.dispatch_time}} {{pass}}</td>
+				<td>{{if order.delivery_premise:}} 
+						<span style="font-weight:bold">{{=order.delivery_premise.premise_name}} &nbsp;</span> {{=order.delivery_premise.premise_address}} 
+					{{pass}}
+				</td>
+				<td class="payment-medhod">{{=order.payment_method}}</td>
+				<td>{{=order.postage}}</td>
+				<td>{{=order.subtotal}}</td>
+				<td>{{=order.total}}</td>
+			</tr>		
+			{{pass}}	
+		</table>
+	</div>
+</div>
+
+<script>
+$(".payment-medhod").each(
+	function(index, element){
+		if($(element).text() == "pay after delivery") $(element).css("color", "red");
+	}
+);
+</script>

@@ -1,0 +1,44 @@
+{{extend 'layout.html'}}
+
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title" style="margin-bottom:30px;">
+		Order number:  {{=A(order.order_number, _href=URL('order_edit', args=order.id))}}
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+
+	<div class="container-center">	
+		<div class="col-440">
+			<ul>
+				<li><strong>Order number: </strong> {{=order.order_number}}</li>
+				<li><strong>Ordered by: </strong> {{=order.ordered_by.first_name}} {{=order.ordered_by.last_name}}</li>
+				<li><strong>Order status: </strong> {{=order.order_status}}</li>
+				<li><strong>Order time: </strong> {{=order.order_time}}</li>		
+				<li><strong>Dispatch time: </strong> {{=order.dispatch_time}}</li>
+				<li><strong>Subotal: </strong> {{=order.subtotal}}</li>
+				<li><strong>Total: </strong> {{=order.total}}</li>
+			</ul>	
+			<button class="btn btn-default w2p-form-button add_item">{{=A('Add or Drop items', _href=URL('sales_item_create', args=order.id))}}</button>
+		</div>
+
+		<div style="width:70%">
+		{{if items:}}
+		<table class="data_table" style="margin-top:30px;">	
+			<tr class="data_table_header">
+				<td>Product name</td>
+				<td>Class</td>			
+				<td>Case quantity</td>
+				<td>price</td>
+			</tr>	
+			{{for item in items:}}
+			<tr>
+				<td>{{=A(item.product.name, _href=URL('product_detail', args=item.product.id))}}</a></td>
+				<td>{{=item.product.meisho}}</td>
+				<td>{{=item.case_quantity}}</td>
+				<td></td>
+			</tr>
+			{{pass}}		
+		</table>	
+		{{pass}}
+		</div>
+	</div>
+</div>

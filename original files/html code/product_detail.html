@@ -1,0 +1,51 @@
+{{extend 'layout.html'}}
+
+<div class="item-detail">
+	<div class="detail-img">
+		<img src="{{=URL('download', args=product.image)}}">
+	</div>
+
+	<div class="detail-spec">
+		<h2>{{=product.name}}</h2>
+		<h2 class="catch">{{=product.catch}}</h2>
+		<ul>
+			<li><strong>Class: </strong> {{=product.meisho}}</li>
+			<li><strong>Rice: </strong> {{=product.rice}}</li>
+			<li><strong>Volume: </strong> {{=product.volume}} ml</li>
+			<li><strong>ABV: </strong> {{=product.abv}} % vol.</li>		
+			<li><strong>Nihonshudo: </strong> {{=product.nihonshudo}}</li>
+			<li><strong>Polishing rate: </strong> {{=product.seimai_buai}}</li>
+			<li><strong>Produced by: </strong> {{=product.brewery}}</li>
+			<li><strong>From: </strong> {{=product.prefecture}} Japan</li>
+			<li>{{=product.comment}}</li>
+			<li class="price_stock"><div class="price">&pound;{{=product.price}} (Incl. 20% VAT)</div>
+			{{if product.stock == 0:}}
+			<span class="outstock">out of stock</span>
+			{{else:}}
+			<!-- span class="stock">{{=product.stock}} bottles left</span -->
+			{{pass}}
+			</li>			
+			
+		</ul>
+	</div>
+
+	<div>
+	{{if product.stock != 0:}}
+		<div style="margin-top:5px; margin-bottom:30px;"><button id="add_item">Add 1 case (12 bottoles)</button></div>
+	{{pass}}
+	</div>
+	
+</div>	
+	
+<script>
+$("#add_item").click( function(){
+	var item_id = {{=product.id}};
+	var order_id = {{=cart.id}}
+    $.post("{{=URL('add_item')}}",
+        {order_id:order_id, select_item: item_id},
+        function(data){
+			location.reload();
+        }
+    );	
+});
+</script>

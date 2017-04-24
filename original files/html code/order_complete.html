@@ -1,0 +1,38 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title" style="margin-bottom: 30px;">Order has placed</h2>
+	
+	{{if latest_order:}}
+	<div class="order-confirmation">
+		<div>
+			<div>Order number</div>
+			<div>{{=latest_order.order_number}}</div>
+		</div>
+
+		<div>
+			<div>Order confirmation</div>
+			<div>Please check the email sent to <span>{{=latest_order.ordered_by.email}}</span>.</div>
+			<div>Sales invoice is attached with the email.</div>
+		</div>		
+		
+		<div>
+			<div>How to make payment</div>
+			<div>
+				Payment can be made through <span>"PAY NOW"</span> button in the order confirmation email.
+				{{if post_payment:}}
+				<br>Please make payment within 21 days after the invoice date.
+				{{pass}}
+			</div>
+		</div>
+
+		<div class="thanks">
+			<div>Thanks a lot - and see you soon!</div>
+		</div>	
+	{{pass}}
+	</div>
+</div>
+
+
+<script>
+</script>

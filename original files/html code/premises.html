@@ -1,0 +1,36 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title2" style="margin-bottom:30px;">
+		Premises
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+		
+	<div>
+		<table class="data_table">
+			<tr class="data_table_header">
+				<td>Premise Name</td>
+				<td>Recipient Name</td>
+				<td>Phone Number</td>
+				<td>Premise Address</td>
+				<td>Postcode</td>
+				<td>Purchased by</td>
+				<td>Homepage</td>
+
+			</tr>	
+			{{for premise in premises:}}		
+			<tr>
+				<td>{{=A(premise.premise_name, _href=URL('premise_edit', args=premise.id))}}</td>
+				<td>{{=A(premise.first_name + " " + premise.last_name, _href=URL('customer_detail', args=premise.purchased_by.id))}}</td>
+				<td>{{=premise.phone_number}}</td>
+				<td>{{=premise.premise_address}}</td>
+				<td>{{=premise.postcode}}</td>
+				<td>{{=A(premise.purchased_by.first_name + " " + premise.purchased_by.last_name, _href=URL('customer_detail', args=premise.purchased_by.id))}}</td>
+				<td>{{if not premise.premise_homepage is "":}}<a href="{{=premise.premise_homepage}}">website</a>{{pass}}</td>
+			</tr>		
+			{{pass}}	
+		</table>
+	</div>
+</div>
+
+	

@@ -1,0 +1,121 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+
+	<div class="cart">
+		<div class="order-options">
+		
+			<h2 class="page_title" style="margin-bottom: 30px;">Payment method</h2>
+
+			<div class="payment-method order-option">
+				<div class="pre_payment">
+					<div>pay before delivery</div>
+					<div>Free delivery</div>
+				</div>
+				
+				<div class="post_payment">
+					<div>pay after delivery</div>
+					<div>£7.95 for delivery <br> due date: 21 days after invoice date</div>
+				</div>				
+			</div>
+
+			<h2 class="page_title" style="margin-bottom: 30px; margin-top:50px; clear:both;">Delivery address</h2>
+			
+			<div class="delivery-premise order-option">
+			{{if premises:}}
+				{{for premise in premises:}}
+				<div class="premise" id="{{=premise.id}}">
+					<div>{{=premise.premise_name}}</div>
+					<div>{{=premise.premise_address}} {{=premise.postcode}}</div>
+				</div>
+				{{pass}}
+			{{pass}}
+				<div class="add-premise">If you want to add a new delivery address, please contact to service@thesakecellar.com</div>
+			</div>
+			
+		</div>
+		
+		<div class="cart-info" style="margin-top:56px;">
+			<div class="subtotal">Subtotal: <span class="subtotal-value">£{{=cart.subtotal}}</span></div>
+			<div class="postage">Postage: <span class="subtotal-value">£{{=cart.postage}}</span></div>
+			<div class="total">Total: <span class="subtotal-value">£{{=cart.total}}</span></div>
+			<div class="inclVAT">Incl. 20% VAT </div>
+			<button class="proceed">Continue</button>
+		</div>
+		
+	</div>
+</div>
+
+<script>
+$(window).load(function () {
+	postage = {{=cart.postage}};
+	if (postage == 0) {
+		$(".pre_payment").addClass("selected-payment");
+	} else {
+		$(".post_payment").addClass("selected-payment");
+	}
+	
+	premise = {{=cart.delivery_premise}};
+	$("#" + premise).addClass("selected-premise");
+	
+	return;
+});
+
+$(function(){
+	$(".proceed").click( function(){ 
+		if($(".selected-premise").length) {
+			location.href = "/checkout"; 
+		} else {
+			alert("Please choose delivery address.");
+		}
+		
+	});
+		
+	$(".payment-method > div").click( function(){
+
+		if (!$(this).hasClass("selected-payment")) {
+			$(".payment-method > div").removeClass("selected-payment");
+			$(this).addClass("selected-payment");
+			if ($(this).hasClass("pre_payment")) pre_payment();
+			if ($(this).hasClass("post_payment")) post_payment();
+		}
+	});	
+
+	$(".delivery-premise > div").click( function(){
+		var order_id = {{=cart.id}};
+		var premise_id = $(this).attr("id");
+		if (!$(this).hasClass("selected-premise")) {
+			$(".delivery-premise > div").removeClass("selected-premise");
+			$(this).addClass("selected-premise");
+		}
+
+		$.post("{{=URL('update_premise')}}",
+			{premise_id:premise_id},
+			function(data){
+				location.href = "/order_options";
+			}
+		);	
+
+	});	
+});
+
+function pre_payment(){
+	var order_id = {{=cart.id}};
+    $.post("{{=URL('pre_payment')}}",
+        {order_id:order_id},
+        function(data){
+			location.href = "/order_options";
+        }
+    );
+}
+
+function post_payment(){
+	var order_id = {{=cart.id}};
+    $.post("{{=URL('post_payment')}}",
+        {order_id:order_id},
+        function(data){
+			location.href = "/order_options";
+        }
+    );
+}
+</script>

@@ -1,0 +1,11 @@
+{{extend 'layout.html'}}
+<div style="margin-bottom:60px;" class="container group">
+
+	<h2 class="page_title" style="margin-bottom:20px;">
+		Update Customer
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+	
+	<div class="container-center">{{=form}}	</div>
+
+</div>

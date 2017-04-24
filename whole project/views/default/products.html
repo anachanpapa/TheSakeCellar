@@ -1,0 +1,40 @@
+{{extend 'layout.html'}}
+
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title" style="margin-bottom:30px;">Products</h2>
+	
+	<ul class="products">	
+		{{for product in products:}}		
+		<li class="product">
+			<div class="product-img">
+				<a href={{=URL('product_detail', args=product.id)}}>
+					<img class="shadow" src="{{=URL('download', args=product.image)}}">
+				</a>
+			</div>
+			<div class="product-spec">
+				<h2>{{=A(product.name, _href=URL('product_detail', args=product.id))}}</h2>
+				<h2 class="catch">{{=product.catch}}</h2>
+				<ul>
+					<li><strong>Class: </strong> {{=product.meisho}}</li>
+					<li><strong>Rice: </strong> {{=product.rice}}</li>
+					<li class="comment">{{=product.comment}}</li>
+					<li class="price_stock"><div class="price">&pound;{{=product.price}}</div>
+					{{if product.stock == 0:}}
+					<span class="outstock">out of stock</span>
+					{{else:}}
+					<!-- span class="stock">{{=product.stock}} bottles left</span -->
+					{{pass}}
+					</li>
+				</ul>
+			</div>
+			
+			{{if auth.has_membership('admin'):}}	
+			<div class="edit_link"><h2>{{=product.product_order}} &nbsp; {{=A('edit', _href=URL('product_edit', args=product.id))}}</h2></div>
+			{{pass}}
+
+		</li>		
+		{{pass}}
+					
+	</ul>	
+
+</div>

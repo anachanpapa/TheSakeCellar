@@ -1,0 +1,81 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title" style="margin-bottom: 30px;">Shopping Cart</h2>
+	
+	{{if items:}}
+	
+	<div class="cart">
+		<ul class="products">	
+			{{for item in items:}}		
+			<li class="product">
+				<div class="product-img">
+					<a href={{=URL('product_detail', args=item.product.id)}}>
+						<img class="shadow" src="{{=URL('download', args=item.product.image)}}">
+					</a>
+				</div>
+				<div class="product-spec">
+					<h2>{{=A(item.product.name, _href=URL('product_detail', args=item.product.id))}}</h2>
+					<ul>
+						<li><strong>Class: </strong> {{=item.product.meisho}}</li>
+						<li><strong>Volume: </strong> {{=item.product.volume}} ml</li>
+						<li class="price_stock"><div class="price">&pound;{{=item.sales_price}} (Incl. 20% VAT)</div></li>
+						<li class="order_quantity"><div class="price">{{=item.case_quantity}} cases</div></li>
+					</ul>
+					<div class="cart_quantity_edit">
+						<button class="add_item2" value="{{=item.product.id}}">Add 1 case</button>	
+						<button class="drop_item" value="{{=item.product.id}}">Drop 1 case</button>				
+					</div>
+				</div>
+			</li>		
+			{{pass}}
+						
+		</ul>
+		
+		<div class="cart-info" style="margin-top:25px;">
+			<div class="subtotal">Subtotal: <span class="subtotal-value">£{{=cart.subtotal}}</span></div>
+			<div class="inclVAT">Incl. 20% VAT </div>
+			<button class="proceed">Proceed to checkout</button>
+		</div>
+		
+	</div>
+	
+	{{else:}}
+	<div class="cart_empty">Shopping Cart is empty.</div>
+	{{pass}}
+
+</div>
+
+
+<script>
+{{if cart:}}
+$(function(){
+
+	$(".proceed").click( function(){ location.href = "/order_options"; });
+
+	$(".add_item2").click( function(){
+		var select_item = $(this).val();
+		//alert(select_item);
+		var order_id = {{=cart.id}};
+		$.post("{{=URL('add_item')}}",
+			{order_id:order_id, select_item: select_item},
+			function(data){
+				location.href = "/cart";
+			}
+		);	
+	});	
+
+	$(".drop_item").click( function(){
+		var select_item = $(this).val();
+		//alert(select_item);
+		var order_id = {{=cart.id}};
+		$.post("{{=URL('drop_item')}}",
+			{order_id:order_id, select_item: select_item},
+			function(data){
+				location.href = "/cart";
+			}
+		);	
+	});	
+});
+{{pass}}
+</script>

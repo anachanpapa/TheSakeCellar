@@ -1,0 +1,35 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title2" style="margin-bottom: 30px;">
+		Customers
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+		
+	<div>
+		<table class="data_table">	
+			<tr class="data_table_header">
+				<td>Name</td>
+				<td>Job Title</td>
+				<td>Company Name</td>
+				<td>Email</td>
+				<td>Phone Number</td>
+				<td>Office Address</td>
+				<td>Postcode</td>
+				<td>Homepage</td>
+			</tr>			
+			{{for customer in customers:}}		
+			<tr>
+				<td>{{=A(customer.first_name + " " + customer.last_name, _href=URL('customer_edit', args=customer.id))}}</td>
+				<td>{{=customer.title}}</td>
+				<td>{{=customer.company_name}}</td>
+				<td>{{=customer.email}}</td>
+				<td>{{=customer.phone_number}}</td>
+				<td>{{=customer.office_address}}</td>
+				<td>{{=customer.postcode}}</td>
+				<td>{{if not customer.company_homepage is "":}}<a href="{{=customer.company_homepage}}">website</a>{{pass}}</td>
+			</tr>		
+			{{pass}}	
+		</table>
+	</div>
+</div>

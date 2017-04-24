@@ -1,0 +1,74 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title" style="margin-bottom: 30px;">Checkout</h2>
+	
+	{{if items:}}
+
+	<div class="order_info">
+		<div>
+			<div>Payment method</div>
+			<div>{{=cart.payment_method}}</div>
+			<a href="/order_options" class="change">change</a>
+		</div>
+		
+		<div>
+			<div>Delivery Address</div>
+			<div>{{=cart.delivery_premise.premise_name}}</div>
+			<div>{{=cart.delivery_premise.premise_address}}</div>
+			<a href="/order_options" class="change">change</a>
+		</div>
+	</div>
+
+	
+	<div class="cart">
+		<ul class="products">	
+			{{for item in items:}}		
+			<li class="product">
+				<div class="product-img">
+					<a href={{=URL('product_detail', args=item.product.id)}}>
+						<img class="shadow" src="{{=URL('download', args=item.product.image)}}">
+					</a>
+				</div>
+				<div class="product-spec">
+					<h2>{{=A(item.product.name, _href=URL('product_detail', args=item.product.id))}}</h2>
+					<ul>
+						<li><strong>Class: </strong> {{=item.product.meisho}}</li>
+						<li class="price_stock"><div class="price">&pound;{{=item.sales_price}} (Incl. 20% VAT)</div></li>
+						<li class="order_quantity"><div class="price">{{=item.case_quantity}} cases</div></li>
+					</ul>
+					<a href="/cart" class="change">change</a>
+				</div>
+			</li>		
+			{{pass}}
+						
+		</ul>
+		
+		<div class="cart-info" style="margin-top:25px;">
+			<div class="subtotal">Subtotal: <span class="subtotal-value">£{{=cart.subtotal}}</span></div>
+			<div class="postage">Postage: <span class="subtotal-value">£{{=cart.postage}}</span></div>
+			<div class="total">Total: <span class="subtotal-value">£{{=cart.total}}</span></div>
+			<div class="inclVAT">Incl. 20% VAT </div>
+			<button class="proceed">Place the order</button>
+		</div>	
+	
+	</div>
+	
+
+
+
+	
+	{{else:}}
+	<div class="cart_empty">Shopping Cart is empty.</div>
+	{{pass}}
+
+</div>
+
+
+<script>
+{{if cart:}}
+$(function(){
+	$(".proceed").click( function(){ location.href = "/order_complete"; });
+});
+{{pass}}
+</script>

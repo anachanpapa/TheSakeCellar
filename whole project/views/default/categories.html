@@ -1,0 +1,23 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	<h2 class="page_title2" style="margin-bottom:30px;">
+		Company categories
+		{{if auth.has_membership('admin'):}}<a class="admin_link" href="/admin_top">back to ADMIN</a>{{pass}}
+	</h2>
+
+	<div>
+		<table class="data_table">	
+			<tr class="data_table_header">
+				<td>Category</td>
+				<td>Off rate</td>
+			</tr>			
+			{{for category in categories:}}		
+			<tr>
+				<td>{{=A(category.name, _href=URL('category_edit', args=category.id))}}</td>
+				<td>{{=category.off_rate}}</td>
+			</tr>		
+			{{pass}}	
+		</table>
+	</div>	
+</div>

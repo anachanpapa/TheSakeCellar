@@ -1,0 +1,43 @@
+{{extend 'layout.html'}}
+
+{{block junmbotron}}
+<div class="jumbotron">
+</div>
+{{end}}
+
+<div class="catch_copy">
+	<!-- 
+	<div>Did you try our stunning sake yet?</div>
+	<div>Try them.&nbsp; Tasting is free anyway :-)</div>
+	-->
+	<div>Have you tried our stunning sake?</div>
+	<div>Try it for free!</div>
+</div>
+	
+<div style="margin-bottom:60px;" class="container group">
+	
+	<ul class="products">	
+		{{for product in products:}}		
+		<li class="product">
+			<h2>{{=A(product.name, _href=URL('product_detail', args=product.id))}}</h2>
+			<div class="product-img">
+				<a href={{=URL('product_detail', args=product.id)}}>
+					<img class="shadow" src="{{=URL('download', args=product.image)}}">
+				</a>
+			</div>
+			<div class="product-spec">
+				<h2 class="mobile-product-name">{{=A(product.name, _href=URL('product_detail', args=product.id))}}</h2>
+				<h2 class="catch">{{=product.catch}}</h2>
+				<ul>
+					<li><strong>Class: </strong> {{=product.meisho}}</li>
+					<li><strong>Rice: </strong> {{=product.rice}}</li>
+					<li class="comment">{{=product.comment}}</li>
+				</ul>
+			</div>
+			
+		</li>		
+		{{pass}}					
+	</ul>
+		
+
+</div>

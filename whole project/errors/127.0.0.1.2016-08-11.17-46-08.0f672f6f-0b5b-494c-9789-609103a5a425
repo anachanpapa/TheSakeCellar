@@ -1,0 +1,630 @@
+(dp1
+S'output'
+p2
+S'<class \'sqlite3.OperationalError\'> near "order": syntax error'
+p3
+sS'layer'
+p4
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\thesakecellar\\models\\db_custom.py'
+p5
+sS'code'
+p6
+S"db.define_table('product',\n\tField('order', 'integer', notnull=True, unique=True),\n\tField('name', 'string', notnull=True, unique=True),\n\tField('meisho', 'string'),\n\tField('abv', requires=IS_MATCH('[\\d\\.]+')),\n\tField('volume', requires=IS_MATCH('[\\d\\.]+')),\t\n\tField('brewery', 'string'),\n\tField('prefecture', 'string'),\n\tField('image', 'upload'),\n\tField('rice', 'string'),\n\tField('nihonshudo', requires=IS_MATCH('[\\d\\.\\-]+')),\n\tField('comment', 'text'),\n\tField('nihonshudo', requires=IS_MATCH('[\\d\\.\\-]+')),\n\tField('price', 'double'),\n\tField('stock', 'integer'),\n\tformat='%(name)s')\n\n\t\ndb.define_table('premise',\n    Field('first_name', length=128, default=''), \n    Field('last_name', length=128, default=''), \n\tField('purchased_by', 'reference auth_user'),\n\tField('premise_name', length=128, default=''),\t\n\tField('premise_address', length=128, default=''),\n\tField('premise_homepage', length=128, default=''),\n\tField('postcode', length=128),\n\tField('phone_number', requires=IS_MATCH('[\\d\\-\\(\\) ]+')),\n    format='%(first_name)s %(last_name)s')\n\n\t\ndb.premise.first_name.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='First Name')\ndb.premise.last_name.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='Last Name')\ndb.premise.premise_name.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='Restaurant/Shop Name')\ndb.premise.premise_homepage.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='Homepage(optional): e.g. http://yourcompany.com')\ndb.premise.premise_address.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='Restaurant/Shop  Address')\ndb.premise.postcode.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='Postcode')\ndb.premise.phone_number.widget = lambda f,v: SQLFORM.widgets.string.widget(f, v, _placeholder='Phone Number')\n\ndb.premise.first_name.requires = IS_NOT_EMPTY(error_message=auth.messages.is_empty) \ndb.premise.last_name.requires = IS_NOT_EMPTY(error_message=auth.messages.is_empty)\ndb.premise.premise_name.requires = IS_NOT_EMPTY(error_message=auth.messages.is_empty) \ndb.premise.premise_address.requires = IS_NOT_EMPTY(error_message=auth.messages.is_empty)\ndb.premise.postcode.requires = IS_NOT_EMPTY(error_message=auth.messages.is_empty) \ndb.premise.postcode.requires = [IS_MATCH('^[a-zA-Z0-9_\\- ]{5,8}$',error_message='wrong postcode')]\ndb.premise.phone_number.requires = IS_NOT_EMPTY(error_message=auth.messages.is_empty) \n\ndb.define_table('sales_order',\n\tField('order_number', requires=IS_MATCH('\\d{14}'), readable=False, writable=False), #e.g. 20160425131401\n\tField('ordered_by', 'reference auth_user', readable=False, writable=False),\n\tField('order_status', 'string', notnull=True, requires = IS_IN_SET(['in cart', 'order processing', 'invoiced', 'dispatched', 'paid', 'accounted'], zero=T('-- choose one --'), error_message='Status must be chosen')), #in cart, order processing, invoiced, dispatched, paid, accounted\n\tField('order_time', 'datetime', readable=False, writable=False),\n\tField('order_time_s', 'string', readable=False, writable=False),\n\tField('dispatch_time', 'string', readable=False, writable=False),\n\tField('delivery_premise', 'reference premise', readable=False, writable=False),\n\tField('payment_method', 'string', readable=False, writable=False),\t\n\tField('postage', 'double', readable=False, writable=False),\t\n\tField('subtotal', 'double', readable=False, writable=False),\n\tField('total', 'double', readable=False, writable=False))\n\ndb.define_table('sales_item',\n\tField('sales_order', 'reference sales_order'),\n\tField('product', 'reference product'),\n\tField('sales_price', 'double'),\n\tField('case_quantity', 'integer'))\n\n\t\ndb.define_table('customer_category',\n\tField('name', 'string'),\n\tField('off_rate', 'double'))\t\n\n\t\nme = auth.user_id"
+p7
+sS'snapshot'
+p8
+(dp9
+S'exception'
+p10
+(dp11
+S'__module__'
+p12
+S"'sqlite3'"
+p13
+sS'__getslice__'
+p14
+S"<method-wrapper '__getslice__' of OperationalError object>"
+p15
+sS'__str__'
+p16
+S"<method-wrapper '__str__' of OperationalError object>"
+p17
+sS'__reduce__'
+p18
+S'<built-in method __reduce__ of OperationalError object>'
+p19
+sS'__dict__'
+p20
+S'{}'
+p21
+sS'__sizeof__'
+p22
+S'<built-in method __sizeof__ of OperationalError object>'
+p23
+sS'__weakref__'
+p24
+S'None'
+p25
+sS'__init__'
+p26
+S"<method-wrapper '__init__' of OperationalError object>"
+p27
+sS'__setattr__'
+p28
+S"<method-wrapper '__setattr__' of OperationalError object>"
+p29
+sS'__reduce_ex__'
+p30
+S'<built-in method __reduce_ex__ of OperationalError object>'
+p31
+sS'__new__'
+p32
+S'<built-in method __new__ of type object>'
+p33
+sS'__format__'
+p34
+S'<built-in method __format__ of OperationalError object>'
+p35
+sS'__class__'
+p36
+S"<class 'sqlite3.OperationalError'>"
+p37
+sS'__doc__'
+p38
+S'None'
+p39
+sS'__getitem__'
+p40
+S"<method-wrapper '__getitem__' of OperationalError object>"
+p41
+sS'__setstate__'
+p42
+S'<built-in method __setstate__ of OperationalError object>'
+p43
+sS'__getattribute__'
+p44
+S"<method-wrapper '__getattribute__' of OperationalError object>"
+p45
+sS'args'
+p46
+S'(\'near "order": syntax error\',)'
+p47
+sS'__subclasshook__'
+p48
+S'<built-in method __subclasshook__ of type object>'
+p49
+sS'__unicode__'
+p50
+S'<built-in method __unicode__ of OperationalError object>'
+p51
+sS'__delattr__'
+p52
+S"<method-wrapper '__delattr__' of OperationalError object>"
+p53
+sS'__repr__'
+p54
+S"<method-wrapper '__repr__' of OperationalError object>"
+p55
+sS'__hash__'
+p56
+S"<method-wrapper '__hash__' of OperationalError object>"
+p57
+ssS'evalue'
+p58
+S'near "order": syntax error'
+p59
+sS'request'
+p60
+cgluon.html
+XML_unpickle
+p61
+(S's\x88R\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">ajax</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">application</td><td style="vertical-align:top;">:</td><td><div>thesakecellar</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cid</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">client</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">controller</td><td style="vertical-align:top;">:</td><td><div>default</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cookies</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">session_id_thesakecellar</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">env</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT</td><td style="vertical-align:top;">:</td><td><div>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT_ENCODING</td><td style="vertical-align:top;">:</td><td><div>gzip, deflate, sdch</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT_LANGUAGE</td><td style="vertical-align:top;">:</td><td><div>ja,en-US;q=0.8,en;q=0.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CONNECTION</td><td style="vertical-align:top;">:</td><td><div>keep-alive</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_COOKIE</td><td style="vertical-align:top;">:</td><td><div>session_id_thesakecellar=127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_HOST</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_UPGRADE_INSECURE_REQUESTS</td><td style="vertical-align:top;">:</td><td><div>1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_USER_AGENT</td><td style="vertical-align:top;">:</td><td><div>Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">PATH_INFO</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">QUERY_STRING</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REMOTE_ADDR</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REMOTE_PORT</td><td style="vertical-align:top;">:</td><td><div>58477</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REQUEST_METHOD</td><td style="vertical-align:top;">:</td><td><div>GET</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SCRIPT_NAME</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_NAME</td><td style="vertical-align:top;">:</td><td><div>Grace</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_PORT</td><td style="vertical-align:top;">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_PROTOCOL</td><td style="vertical-align:top;">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_SOFTWARE</td><td style="vertical-align:top;">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">app_folders</td><td style="vertical-align:top;">:</td><td><div>set([&#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\thesakecellar\\\\&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">applications_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_options</td><td style="vertical-align:top;">:</td><td><div>&lt;Values at 0x3924058: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;fe80::5c04:b79d:529c:b311%4&#x27;, &#x27;192.168.2.1&#x27;, &#x27;192.168.229.1&#x27;, &#x27;192.168.1.72&#x27;, &#x27;fe80::28d2:dcdc:45a1:1f9c%2&#x27;, &#x27;fe80::2093:bc47:9545:e11c%5&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;scheduler_groups&#x27;: None, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;Grace&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;print_errors&#x27;: False, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;minthreads&#x27;: None, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;profiler_dir&#x27;: None, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;interfaces&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;gae&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;import_models&#x27;: False, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">db_sessions</td><td style="vertical-align:top;">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">debugging</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">gluon_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept</td><td style="vertical-align:top;">:</td><td><div>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept_encoding</td><td style="vertical-align:top;">:</td><td><div>gzip, deflate, sdch</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept_language</td><td style="vertical-align:top;">:</td><td><div>ja,en-US;q=0.8,en;q=0.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_connection</td><td style="vertical-align:top;">:</td><td><div>keep-alive</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_cookie</td><td style="vertical-align:top;">:</td><td><div>session_id_thesakecellar=127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_host</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_upgrade_insecure_requests</td><td style="vertical-align:top;">:</td><td><div>1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_user_agent</td><td style="vertical-align:top;">:</td><td><div>Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_jython</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_pypy</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_source</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">local_hosts</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>fe80::5c04:b79d:529c:b311%4</div></td></tr><tr><td><div>192.168.2.1</div></td></tr><tr><td><div>192.168.229.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>::1</div></td></tr><tr><td><div>192.168.1.72</div></td></tr><tr><td><div>fe80::28d2:dcdc:45a1:1f9c%2</div></td></tr><tr><td><div>fe80::2093:bc47:9545:e11c%5</div></td></tr><tr><td><div>Grace</div></td></tr><tr><td><div>127.0.0.1</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path_info</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">query_string</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remote_addr</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remote_port</td><td style="vertical-align:top;">:</td><td><div>58477</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">request_method</td><td style="vertical-align:top;">:</td><td><div>GET</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">request_uri</td><td style="vertical-align:top;">:</td><td><div>/thesakecellar/default/index</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">script_name</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_name</td><td style="vertical-align:top;">:</td><td><div>Grace</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_port</td><td style="vertical-align:top;">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_protocol</td><td style="vertical-align:top;">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_software</td><td style="vertical-align:top;">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_original_uri</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_path</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_version</td><td style="vertical-align:top;">:</td><td><div>2.13.4-stable+timestamp.2015.12.26.04.59.39</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.errors</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0x029DD0D0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.file_wrapper</td><td style="vertical-align:top;">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0x03894068&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.input</td><td style="vertical-align:top;">:</td><td><div>&lt;socket._fileobject object at 0x09367AF0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.multiprocess</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.multithread</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.run_once</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.url_scheme</td><td style="vertical-align:top;">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.version</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_errors</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0x029DD0D0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_file_wrapper</td><td style="vertical-align:top;">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0x03894068&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_input</td><td style="vertical-align:top;">:</td><td><div>&lt;socket._fileobject object at 0x09367AF0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_multiprocess</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_multithread</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_run_once</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_url_scheme</td><td style="vertical-align:top;">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_version</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">extension</td><td style="vertical-align:top;">:</td><td><div>html</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">folder</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\thesakecellar\\</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">function</td><td style="vertical-align:top;">:</td><td><div>index</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">global_settings</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">app_folders</td><td style="vertical-align:top;">:</td><td><div>set([&#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\thesakecellar\\\\&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">applications_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_options</td><td style="vertical-align:top;">:</td><td><div>&lt;Values at 0x3924058: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [&#x27;fe80::5c04:b79d:529c:b311%4&#x27;, &#x27;192.168.2.1&#x27;, &#x27;192.168.229.1&#x27;, &#x27;192.168.1.72&#x27;, &#x27;fe80::28d2:dcdc:45a1:1f9c%2&#x27;, &#x27;fe80::2093:bc47:9545:e11c%5&#x27;], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;scheduler_groups&#x27;: None, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;Grace&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;print_errors&#x27;: False, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;minthreads&#x27;: None, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;profiler_dir&#x27;: None, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;interfaces&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;gae&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;import_models&#x27;: False, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">db_sessions</td><td style="vertical-align:top;">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">debugging</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">gluon_parent</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_jython</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_pypy</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_source</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">local_hosts</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>fe80::5c04:b79d:529c:b311%4</div></td></tr><tr><td><div>192.168.2.1</div></td></tr><tr><td><div>192.168.229.1</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>::1</div></td></tr><tr><td><div>192.168.1.72</div></td></tr><tr><td><div>fe80::28d2:dcdc:45a1:1f9c%2</div></td></tr><tr><td><div>fe80::2093:bc47:9545:e11c%5</div></td></tr><tr><td><div>Grace</div></td></tr><tr><td><div>127.0.0.1</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_version</td><td style="vertical-align:top;">:</td><td><div>2.13.4-stable+timestamp.2015.12.26.04.59.39</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_https</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_local</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_restful</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_scheduler</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_shell</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">now</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 8, 11, 17, 46, 8, 85000)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">url</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">utcnow</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 8, 11, 16, 46, 8, 85000)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi</td><td style="vertical-align:top;">:</td><td><div>&lt;gluon.main.LazyWSGI object at 0x03D4D910&gt;</div></td></tr></table></div>'
+tRp62
+sS'frames'
+p63
+(lp64
+(dp65
+S'file'
+p66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\restricted.py'
+p67
+sS'dump'
+p68
+(dp69
+S'environment'
+p70
+S"{'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'ASSIGNJS': <function ASSIGNJS>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, 'CAT': <class 'gluon.html.CAT'>, ...}"
+p71
+sS'ccode'
+p72
+S'<code object <module> at 03C5DDE8, file "C:\\User...tions\\thesakecellar\\models\\db_custom.py", line 1>'
+p73
+ssS'lnum'
+p74
+I227
+sS'lines'
+p75
+(dp76
+I224
+S'            ccode = code'
+p77
+sI225
+S'        else:'
+p78
+sI226
+S'            ccode = compile2(code, layer)'
+p79
+sI227
+S'        exec ccode in environment'
+p80
+sI228
+S'    except HTTP:'
+p81
+sI229
+S'        raise'
+p82
+sI230
+S'    except RestrictedError:'
+p83
+sI231
+S'        # do not encapsulate (obfuscate) the original RestrictedError'
+p84
+sI222
+S'    try:'
+p85
+sI223
+S'        if isinstance(code, types.CodeType):'
+p86
+ssS'call'
+p87
+S'(code="db.define_table(\'product\',\\n\\tField(\'order\', \'inte...ield(\'off_rate\', \'double\'))\\t\\n\\n\\t\\nme = auth.user_id", environment={\'A\': <class \'gluon.html.A\'>, \'ANY_OF\': <class \'gluon.validators.ANY_OF\'>, \'ASSIGNJS\': <function ASSIGNJS>, \'Auth\': <class \'gluon.tools.Auth\'>, \'B\': <class \'gluon.html.B\'>, \'BEAUTIFY\': <class \'gluon.html.BEAUTIFY\'>, \'BODY\': <class \'gluon.html.BODY\'>, \'BR\': <class \'gluon.html.BR\'>, \'BUTTON\': <class \'gluon.html.BUTTON\'>, \'CAT\': <class \'gluon.html.CAT\'>, ...}, layer=r\'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\thesakecellar\\models\\db_custom.py\')'
+p88
+sS'func'
+p89
+S'restricted'
+p90
+sa(dp91
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\thesakecellar\\models\\db_custom.py'
+p92
+sg68
+(dp93
+S'builtinformat'
+p94
+S'<built-in function format>'
+p95
+ssg74
+I16
+sg75
+(dp96
+I11
+S"\tField('nihonshudo', requires=IS_MATCH('[\\d\\.\\-]+')),"
+p97
+sI12
+S"\tField('comment', 'text'),"
+p98
+sI13
+S"\tField('nihonshudo', requires=IS_MATCH('[\\d\\.\\-]+')),"
+p99
+sI14
+S"\tField('price', 'double'),"
+p100
+sI15
+S"\tField('stock', 'integer'),"
+p101
+sI16
+S"\tformat='%(name)s')"
+p102
+sI17
+S''
+sI18
+S''
+sI19
+S"db.define_table('premise',"
+p103
+sI20
+S"    Field('first_name', length=128, default=''),"
+p104
+ssg87
+S'()'
+p105
+sg89
+S'<module>'
+p106
+sa(dp107
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\base.py'
+p108
+sg68
+(dp109
+S'fields'
+p110
+S'(<pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>)'
+p111
+sS'self'
+p112
+S'<DAL uri="sqlite://storage.sqlite">'
+p113
+sS'args'
+p114
+S"{'format': '%(name)s'}"
+p115
+sS'tablename'
+p116
+S"'product'"
+p117
+sS'table'
+p118
+S'undefined'
+p119
+sS'self.lazy_define_table'
+p120
+S'<bound method DAL.lazy_define_table of <DAL uri="sqlite://storage.sqlite">>'
+p121
+ssg74
+I834
+sg75
+(dp122
+I832
+S'            table = None'
+p123
+sI833
+S'        else:'
+p124
+sI834
+S'            table = self.lazy_define_table(tablename,*fields,**args)'
+p125
+sI835
+S'        if not tablename in self.tables:'
+p126
+sI836
+S'            self.tables.append(tablename)'
+p127
+sI837
+S'        return table'
+p128
+sI838
+S''
+sI829
+S'                    % (tablename,invalid_args))'
+p129
+sI830
+S'        if self._lazy_tables and tablename not in self._LAZY_TABLES:'
+p130
+sI831
+S'            self._LAZY_TABLES[tablename] = (tablename,fields,args)'
+p131
+ssg87
+S'(self=<DAL uri="sqlite://storage.sqlite">, tablename=\'product\', *fields=(<pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>), **args={\'format\': \'%(name)s\'})'
+p132
+sg89
+S'define_table'
+p133
+sa(dp134
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\base.py'
+p135
+sg68
+(dp136
+S'polymodel'
+p137
+S'None'
+p138
+ssg74
+I873
+sg75
+(dp139
+I868
+S'            try:'
+p140
+sI869
+S'                GLOBAL_LOCKER.acquire()'
+p141
+sI870
+S'                self._lastsql = self._adapter.create_table('
+p142
+sI871
+S'                    table,migrate=migrate,'
+p143
+sI872
+S'                    fake_migrate=fake_migrate,'
+p144
+sI873
+S'                    polymodel=polymodel)'
+p145
+sI874
+S'            finally:'
+p146
+sI875
+S'                GLOBAL_LOCKER.release()'
+p147
+sI876
+S'        else:'
+p148
+sI877
+S'            table._dbt = None'
+p149
+ssg87
+S'(self=<DAL uri="sqlite://storage.sqlite">, tablename=\'product\', *fields=(<pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>, <pydal.objects.Field object>), **args={\'format\': \'%(name)s\'})'
+p150
+sg89
+S'lazy_define_table'
+p151
+sa(dp152
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py'
+p153
+sg68
+(dp154
+S'fake_migrate'
+p155
+S'False'
+p156
+ssg74
+I510
+sg75
+(dp157
+I512
+S'        return query'
+p158
+sI513
+S''
+sI514
+S'    def migrate_table('
+p159
+sI505
+S'            if sql_fields != sql_fields_old:'
+p160
+sI506
+S'                self.migrate_table('
+p161
+sI507
+S'                    table,'
+p162
+sI508
+S'                    sql_fields, sql_fields_old,'
+p163
+sI509
+S'                    sql_fields_aux, None,'
+p164
+sI510
+S'                    fake_migrate=fake_migrate'
+p165
+sI511
+S'                    )'
+p166
+ssg87
+S'(self=<pydal.adapters.sqlite.SQLiteAdapter object>, table=<Table product (id,order,name,meisho,abv,volume,...cture,image,rice,nihonshudo,comment,price,stock)>, migrate=True, fake_migrate=False, polymodel=None)'
+p167
+sg89
+S'create_table'
+p168
+sa(dp169
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py'
+p170
+sg68
+(dp171
+S'self'
+p172
+S'<pydal.adapters.sqlite.SQLiteAdapter object>'
+p173
+sS'self.execute'
+p174
+S'<bound method SQLiteAdapter.execute of <pydal.adapters.sqlite.SQLiteAdapter object>>'
+p175
+sS'sub_query'
+p176
+S"'ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;'"
+p177
+ssg74
+I623
+sg75
+(dp178
+I618
+S'                    if fake_migrate:'
+p179
+sI619
+S'                        if db._adapter.commit_on_alter_table:'
+p180
+sI620
+S'                            self.save_dbt(table,sql_fields_current)'
+p181
+sI621
+S"                        self.log('faked!\\n', table)"
+p182
+sI622
+S'                    else:'
+p183
+sI623
+S'                        self.execute(sub_query)'
+p184
+sI624
+S'                        # Caveat: mysql, oracle and firebird'
+p185
+sI625
+S'                        # do not allow multiple alter table'
+p186
+sI626
+S'                        # in one transaction so we must commit'
+p187
+sI627
+S'                        # partial transactions and'
+p188
+ssg87
+S"(self=<pydal.adapters.sqlite.SQLiteAdapter object>, table=<Table product (id,order,name,meisho,abv,volume,...cture,image,rice,nihonshudo,comment,price,stock)>, sql_fields={'abv': {'length': 512, 'notnull': False, 'sortable': 5, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'brewery': {'length': 512, 'notnull': False, 'sortable': 7, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'comment': {'length': 32768, 'notnull': False, 'sortable': 12, 'sql': 'TEXT', 'type': 'text', 'unique': False}, 'id': {'length': 512, 'notnull': False, 'sortable': 1, 'sql': 'INTEGER PRIMARY KEY AUTOINCREMENT', 'type': 'id', 'unique': False}, 'image': {'length': 512, 'notnull': False, 'sortable': 9, 'sql': 'CHAR(512)', 'type': 'upload', 'unique': False}, 'meisho': {'length': 512, 'notnull': False, 'sortable': 4, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'name': {'length': 512, 'notnull': True, 'sortable': 3, 'sql': 'CHAR(512) NOT NULL UNIQUE', 'type': 'string', 'unique': True}, 'nihonshudo': {'length': 512, 'notnull': False, 'sortable': 11, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'order': {'length': 512, 'notnull': True, 'sortable': 2, 'sql': 'INTEGER NOT NULL UNIQUE', 'type': 'integer', 'unique': True}, 'prefecture': {'length': 512, 'notnull': False, 'sortable': 8, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, ...}, sql_fields_old={'abv': {'length': 512, 'notnull': False, 'sortable': 4, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'brewery': {'length': 512, 'notnull': False, 'sortable': 6, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'comment': {'length': 32768, 'notnull': False, 'sortable': 11, 'sql': 'TEXT', 'type': 'text', 'unique': False}, 'id': {'length': 512, 'notnull': False, 'sortable': 1, 'sql': 'INTEGER PRIMARY KEY AUTOINCREMENT', 'type': 'id', 'unique': False}, 'image': {'length': 512, 'notnull': False, 'sortable': 8, 'sql': 'CHAR(512)', 'type': 'upload', 'unique': False}, 'meisho': {'length': 512, 'notnull': False, 'sortable': 3, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'name': {'length': 512, 'notnull': True, 'sortable': 2, 'sql': 'CHAR(512) NOT NULL UNIQUE', 'type': 'string', 'unique': True}, 'nihonshudo': {'length': 512, 'notnull': False, 'sortable': 10, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'prefecture': {'length': 512, 'notnull': False, 'sortable': 7, 'sql': 'CHAR(512)', 'type': 'string', 'unique': False}, 'price': {'length': 512, 'notnull': False, 'sortable': 12, 'sql': 'DOUBLE', 'type': 'double', 'unique': False}, ...}, sql_fields_aux={'abv': {'sql': 'CHAR(512)'}, 'brewery': {'sql': 'CHAR(512)'}, 'comment': {'sql': 'TEXT'}, 'id': {'sql': 'INTEGER PRIMARY KEY AUTOINCREMENT'}, 'image': {'sql': 'CHAR(512)'}, 'meisho': {'sql': 'CHAR(512)'}, 'name': {'sql': 'CHAR(512) NOT NULL UNIQUE'}, 'nihonshudo': {'sql': 'CHAR(512)'}, 'order': {'sql': 'INTEGER NOT NULL UNIQUE'}, 'prefecture': {'sql': 'CHAR(512)'}, ...}, logfile=None, fake_migrate=False)"
+p189
+sg89
+S'migrate_table'
+p190
+sa(dp191
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py'
+p192
+sg68
+(dp193
+S'a'
+S"('ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;',)"
+p194
+sS'self'
+p195
+S'<pydal.adapters.sqlite.SQLiteAdapter object>'
+p196
+sS'b'
+g21
+sS'self.log_execute'
+p197
+S'<bound method SQLiteAdapter.log_execute of <pydal.adapters.sqlite.SQLiteAdapter object>>'
+p198
+ssg74
+I1385
+sg75
+(dp199
+I1380
+S'        self.db._timings.append((command,time.time()-t0))'
+p200
+sI1381
+S'        del self.db._timings[:-TIMINGSSIZE]'
+p201
+sI1382
+S'        return ret'
+p202
+sI1383
+S''
+sI1384
+S'    def execute(self, *a, **b):'
+p203
+sI1385
+S'        return self.log_execute(*a, **b)'
+p204
+sI1386
+S''
+sI1387
+S'    def execute_test_query(self):'
+p205
+sI1388
+S'        return self.execute(self.test_query)'
+p206
+sI1389
+S''
+ssg87
+S"(self=<pydal.adapters.sqlite.SQLiteAdapter object>, *a=('ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;',), **b={})"
+p207
+sg89
+S'execute'
+p208
+sa(dp209
+g66
+S'C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py'
+p210
+sg68
+(dp211
+S'a'
+S"('ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;',)"
+p212
+sS'b'
+g21
+sS'self'
+p213
+S'<pydal.adapters.sqlite.SQLiteAdapter object>'
+p214
+sS'ret'
+p215
+g119
+sS'command'
+p216
+S"'ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;'"
+p217
+sS'self.get_cursor'
+p218
+S'<bound method SQLiteAdapter.get_cursor of <pydal.adapters.sqlite.SQLiteAdapter object>>'
+p219
+sS').execute'
+p220
+g119
+ssg74
+I1379
+sg75
+(dp221
+I1376
+S"            self.db.logger.debug('SQL: %s' % command)"
+p222
+sI1377
+S'        self.db._lastsql = command'
+p223
+sI1378
+S'        t0 = time.time()'
+p224
+sI1379
+S'        ret = self.get_cursor().execute(command, *a[1:], **b)'
+p225
+sI1380
+S'        self.db._timings.append((command,time.time()-t0))'
+p226
+sI1381
+S'        del self.db._timings[:-TIMINGSSIZE]'
+p227
+sI1382
+S'        return ret'
+p228
+sI1383
+S''
+sI1374
+S'            command = self.filter_sql_command(command)'
+p229
+sI1375
+S'        if self.db._debug:'
+p230
+ssg87
+S"(self=<pydal.adapters.sqlite.SQLiteAdapter object>, *a=('ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;',), **b={})"
+p231
+sg89
+S'log_execute'
+p232
+sasS'pyver'
+p233
+S'Python 2.7.11: C:\\Python27\\python.exe (prefix: C:\\Python27)'
+p234
+sS'session'
+p235
+g61
+(S's\xb3\x0c\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">auth</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">expiration</td><td style="vertical-align:top;">:</td><td><div>3600</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">hmac_key</td><td style="vertical-align:top;">:</td><td><div>14b70cba-ddd2-4244-b8f5-74462d4dd930</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">last_visit</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 8, 11, 17, 46, 8, 85000)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remember_me</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">user</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">company_homepage</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">company_name</td><td style="vertical-align:top;">:</td><td><div>2OR3 LTD</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">email</td><td style="vertical-align:top;">:</td><td><div>anachanpapa@gmail.com</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">first_name</td><td style="vertical-align:top;">:</td><td><div>Hiroshi</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">id</td><td style="vertical-align:top;">:</td><td><div>1L</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">last_name</td><td style="vertical-align:top;">:</td><td><div>Sasaki</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">office_address</td><td style="vertical-align:top;">:</td><td><div>2 Andover Close</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">phone_number</td><td style="vertical-align:top;">:</td><td><div>02085757185</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">postcode</td><td style="vertical-align:top;">:</td><td><div>UB6 9QW</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">registration_id</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">registration_key</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">reset_password_key</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">title</td><td style="vertical-align:top;">:</td><td><div>admin</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">user_groups</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">1</td><td style="vertical-align:top;">:</td><td><div>user_1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">4</td><td style="vertical-align:top;">:</td><td><div>admin</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">flash</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr></table></div>'
+tRp236
+sS'etype'
+p237
+S"<class 'sqlite3.OperationalError'>"
+p238
+sS'date'
+p239
+S'Thu Aug 11 17:46:08 2016'
+p240
+sS'response'
+p241
+g61
+(S'sC\x18\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">body</td><td style="vertical-align:top;">:</td><td><div>&lt;cStringIO.StringO object at 0x03D4D200&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cookies</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">session_id_thesakecellar</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">delimiters</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>{{</div></td></tr><tr><td><div>}}</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">files</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">flash</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">form_label_separator</td><td style="vertical-align:top;">:</td><td><div>: </div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">formstyle</td><td style="vertical-align:top;">:</td><td><div>table3cols</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">generic_patterns</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>*</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">headers</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">X-Powered-By</td><td style="vertical-align:top;">:</td><td><div>web2py</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">menu</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">meta</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">models_to_run</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>^\\w+\\.py$</div></td></tr><tr><td><div>^default/\\w+\\.py$</div></td></tr><tr><td><div>^default/index/\\w+\\.py$</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">postprocessing</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_client</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_compression_level</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_expires</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_key</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_data_name</td><td style="vertical-align:top;">:</td><td><div>session_data_thesakecellar</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_file</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;C:\\\\Users\\\\Hiroshi\\\\Desktop\\\\web2py_src\\\\web2py\\\\applications\\\\thesakecellar\\\\sessions\\\\014\\\\121\\\\127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9&#x27;, mode &#x27;rb+&#x27; at 0x03D2CC28&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_filename</td><td style="vertical-align:top;">:</td><td><div>C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\thesakecellar\\sessions\\127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_hash</td><td style="vertical-align:top;">:</td><td><div>502a1329b3b1d3960470f00a80cc44c1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-cc2e636b-3c57-499c-a195-21d9b6fd3cd9</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_name</td><td style="vertical-align:top;">:</td><td><div>session_id_thesakecellar</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_locked</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_masterapp</td><td style="vertical-align:top;">:</td><td><div>thesakecellar</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_new</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_storage_type</td><td style="vertical-align:top;">:</td><td><div>file</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">status</td><td style="vertical-align:top;">:</td><td><div>200</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">view</td><td style="vertical-align:top;">:</td><td><div>default/index.html</div></td></tr></table></div>'
+tRp242
+sS'locals'
+p243
+(dp244
+S'a'
+S"('ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;',)"
+p245
+sS'self'
+p246
+S'<pydal.adapters.sqlite.SQLiteAdapter object>'
+p247
+sS'b'
+g21
+sS'command'
+p248
+S"'ALTER TABLE product ADD order INTEGER NOT NULL UNIQUE;'"
+p249
+sS't0'
+p250
+S'1470933968.107'
+p251
+sssS'traceback'
+p252
+S'Traceback (most recent call last):\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\restricted.py", line 227, in restricted\n    exec ccode in environment\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\applications\\thesakecellar\\models\\db_custom.py", line 16, in <module>\n    format=\'%(name)s\')\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\base.py", line 834, in define_table\n    table = self.lazy_define_table(tablename,*fields,**args)\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\base.py", line 873, in lazy_define_table\n    polymodel=polymodel)\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py", line 510, in create_table\n    fake_migrate=fake_migrate\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py", line 623, in migrate_table\n    self.execute(sub_query)\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py", line 1385, in execute\n    return self.log_execute(*a, **b)\n  File "C:\\Users\\Hiroshi\\Desktop\\web2py_src\\web2py\\gluon\\packages\\dal\\pydal\\adapters\\base.py", line 1379, in log_execute\n    ret = self.get_cursor().execute(command, *a[1:], **b)\nOperationalError: near "order": syntax error\n'
+p253
+s.

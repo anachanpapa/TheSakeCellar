@@ -1,0 +1,49 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	
+	<h2 class="page_title" style="margin-bottom:30px;">Admin</h2>
+
+	<div class="container-center">
+		<table class="data_table admin-table">	
+			<tr class="data_table_header">
+				<td style="width:200px;">TABLE</td>
+				<td style="width:100px;">LIST</td>
+				<td style="width:100px;">ADD</td>
+			</tr>			
+
+			<tr>
+				<td>ORDER</td>
+				<td><a href="/orders"><span class="glyphicon glyphicon-th-list"></span></td>
+				<td><a href="/order_create"><span class="glyphicon glyphicon-plus"></span></td>
+			</tr>	
+			
+			<tr>
+				<td>CUSTOMER</td>
+				<td><a href="/customers"><span class="glyphicon glyphicon-th-list"></span></td>
+				<td><a href="/customer_create"><span class="glyphicon glyphicon-plus"></span></td>
+			</tr>		
+
+			<tr>
+				<td>PREMISE</td>
+				<td><a href="/premises"><span class="glyphicon glyphicon-th-list"></span></td>
+				<td><a href="/premise_create"><span class="glyphicon glyphicon-plus"></span></td>
+			</tr>	
+
+			<tr>
+				<td>PRODUCT</td>
+				<td><a href="/products"><span class="glyphicon glyphicon-th-list"></span></td>
+				<td><a href="/product_create"><span class="glyphicon glyphicon-plus"></span></td>
+			</tr>	
+
+
+			<tr>
+				<td>CUSTOMER CATEGORY</td>
+				<td><a href="/categories"><span class="glyphicon glyphicon-th-list"></span></td>
+				<td><a href="/category_create"><span class="glyphicon glyphicon-plus"></span></td>
+			</tr>	
+			
+		</table>
+	</div>
+	
+</div>

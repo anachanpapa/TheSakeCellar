@@ -1,0 +1,35 @@
+{{extend 'layout.html'}}
+	 
+<div style="margin-bottom:60px;" class="container group">
+	
+	<h2 class="page_title" style="margin-bottom:30px;">Your order history</h2>
+
+	<div class="container-center">
+		<table class="data_table">	
+		{{if orders:}}
+			<tr class="data_table_header">
+				<td>Order number</td>
+				<td>Status</td>
+				<td>Order</td>
+				<td>Payment</td>
+				<td>Subtotal</td>
+				<td>Total</td>
+			</tr>			
+			{{for order in orders:}}		
+			<tr>
+				<td>{{=A(order.order_number, _href=URL('order_detail', args=order.id))}}</td>
+				<td>{{=order.order_status}}</td>
+				<td>{{=order.order_time_s}}</td>
+				<td>{{=order.dispatch_time}}</td>
+				<td>{{=order.subtotal}}</td>
+				<td>{{=order.total}}</td>
+			</tr>		
+			{{pass}}
+			
+		{{else:}}
+		<div>There is no order history.</div>
+		{{pass}}		
+		</table>
+	</div>
+	
+</div>
